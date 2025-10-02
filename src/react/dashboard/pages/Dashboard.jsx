@@ -279,7 +279,7 @@ const Dashboard = () => {
     padding: theme.spacing.lg,
     maxWidth: '1200px',
     margin: '0 auto',
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.subtleGreen,
     minHeight: '100vh',
   };
   

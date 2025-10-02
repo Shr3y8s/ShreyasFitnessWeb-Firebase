@@ -5,6 +5,7 @@ export const theme = {
     primaryDark: '#388E3C',
     primaryLight: '#E8F5E9', // Lighter green for backgrounds
     secondary: '#212121', // Darker text for better contrast
+    subtleGreen: '#f6faf6', // Lighter subtle green background
     lightGray: '#f8f9fa', // Lighter background
     mediumGray: '#e9ecef', // Softer medium gray
     darkGray: '#6c757d', // Softer dark gray for subtexts

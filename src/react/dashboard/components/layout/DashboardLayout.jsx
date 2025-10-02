@@ -60,7 +60,7 @@ const DashboardLayout = ({ children }) => {
   const layoutStyles = {
     display: 'flex',
     minHeight: '100vh',
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#f6faf6',
     position: 'relative',
     overflow: 'hidden'
   };
