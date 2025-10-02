@@ -234,7 +234,7 @@ const Sidebar = ({ collapsed, userProfile, toggleSidebar, isMobileView, mobileVi
   const notificationBadgeStyles = {
     position: 'absolute',
     right: collapsed ? '8px' : '20px',
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: theme.colors.primary,  // Changed from primaryLight to primary
     color: theme.colors.white,
     borderRadius: '10px',
     minWidth: '20px',

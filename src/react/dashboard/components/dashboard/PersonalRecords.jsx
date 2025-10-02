@@ -48,6 +48,16 @@ const PersonalRecords = ({ records }) => {
     backgroundColor: theme.colors.lightestGray || '#f9f9f9',
     marginBottom: theme.spacing.sm,
     borderRadius: theme.borderRadius.small,
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    borderLeft: '0px solid transparent',
+  };
+  
+  // Record item hover styles
+  const recordItemHoverStyles = {
+    backgroundColor: theme.colors.lightGray || '#e9ecef',
+    borderLeft: `3px solid ${theme.colors.primary}`,
+    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
   };
   
   const recordLeftStyles = {
@@ -160,7 +170,22 @@ const PersonalRecords = ({ records }) => {
       </p>
       
       {records && records.map((record, index) => (
-        <div key={index} style={recordItemStyles}>
+        <div 
+          key={index} 
+          style={recordItemStyles}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = recordItemHoverStyles.backgroundColor;
+            e.currentTarget.style.borderLeft = recordItemHoverStyles.borderLeft;
+            e.currentTarget.style.boxShadow = recordItemHoverStyles.boxShadow;
+            e.currentTarget.style.paddingLeft = '12px'; // Adjust padding to accommodate border
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = theme.colors.lightestGray || '#f9f9f9';
+            e.currentTarget.style.borderLeft = '0px solid transparent';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.paddingLeft = theme.spacing.sm;
+          }}
+        >
           <div style={recordLeftStyles}>
             <div style={recordIconStyles(getIconColor(record.type))}>
               {getIconContent(record.type)}

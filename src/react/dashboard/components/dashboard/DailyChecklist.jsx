@@ -50,6 +50,16 @@ const DailyChecklist = ({ tasks }) => {
     backgroundColor: theme.colors.lightestGray || '#f9f9f9',
     marginBottom: theme.spacing.sm,
     borderRadius: theme.borderRadius.small,
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    borderLeft: '0px solid transparent',
+  };
+  
+  // Task item hover styles
+  const taskItemHoverStyles = {
+    backgroundColor: theme.colors.lightGray || '#e9ecef',
+    borderLeft: `3px solid ${theme.colors.primary}`,
+    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
   };
   
   const taskIconStyles = {
@@ -153,7 +163,22 @@ const DailyChecklist = ({ tasks }) => {
       <p style={descriptionStyles}>Stay on track with your daily and weekly goals.</p>
       
       {tasks && tasks.map((task, index) => (
-        <div key={index} style={taskItemContainerStyles}>
+        <div 
+          key={index} 
+          style={taskItemContainerStyles}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = taskItemHoverStyles.backgroundColor;
+            e.currentTarget.style.borderLeft = taskItemHoverStyles.borderLeft;
+            e.currentTarget.style.boxShadow = taskItemHoverStyles.boxShadow;
+            e.currentTarget.style.paddingLeft = '12px'; // Adjust padding to accommodate border
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = theme.colors.lightestGray || '#f9f9f9';
+            e.currentTarget.style.borderLeft = '0px solid transparent';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.paddingLeft = theme.spacing.sm;
+          }}
+        >
           <span style={taskIconStyles}>{getTaskIcon(task)}</span>
           <span style={taskTextStyles}>{task}</span>
           <div 

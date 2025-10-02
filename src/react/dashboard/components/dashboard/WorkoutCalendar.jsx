@@ -59,13 +59,16 @@ const WorkoutCalendar = ({ upcomingSessions, completedSessions }) => {
     backgroundColor: theme.colors.lightestGray || '#f9f9f9',
     marginBottom: theme.spacing.sm,
     borderRadius: theme.borderRadius.small,
-    transition: 'background-color 0.2s ease',
-    cursor: 'default',
+    transition: 'all 0.2s ease',
+    cursor: 'pointer',
+    borderLeft: '0px solid transparent',
   };
   
-  // Session item hover styles - slightly darker than the default
+  // Session item hover styles - enhanced with left border and more distinct background
   const sessionItemHoverStyles = {
-    backgroundColor: theme.colors.lightGray || '#e9e9e9',
+    backgroundColor: theme.colors.lightGray || '#e9ecef',
+    borderLeft: `3px solid ${theme.colors.primary}`,
+    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
   };
 
   // Session content styles
@@ -247,9 +250,15 @@ const WorkoutCalendar = ({ upcomingSessions, completedSessions }) => {
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.backgroundColor = sessionItemHoverStyles.backgroundColor;
+                e.currentTarget.style.borderLeft = sessionItemHoverStyles.borderLeft;
+                e.currentTarget.style.boxShadow = sessionItemHoverStyles.boxShadow;
+                e.currentTarget.style.paddingLeft = '12px'; // Adjust padding to accommodate border
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.backgroundColor = theme.colors.lightestGray || '#f9f9f9';
+                e.currentTarget.style.borderLeft = '0px solid transparent';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.paddingLeft = theme.spacing.sm;
               }}
             >
               <div style={sessionContentStyles}>

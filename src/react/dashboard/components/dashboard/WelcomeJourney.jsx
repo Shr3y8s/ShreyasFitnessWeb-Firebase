@@ -243,7 +243,19 @@ const WelcomeJourney = ({ journey, onAllCompleted, onClose }) => {
         ))}
       </div>
       
-      <button style={buttonStyles}>
+      <button 
+        style={buttonStyles}
+        onMouseOver={(e) => {
+          e.currentTarget.style.backgroundColor = theme.colors.primaryDark;
+          e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(76, 175, 80, 0.25)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.backgroundColor = theme.colors.welcomeCard.accent;
+          e.currentTarget.style.transform = 'none';
+          e.currentTarget.style.boxShadow = theme.boxShadow;
+        }}
+      >
         Schedule Your Consultation &nbsp;→
       </button>
     </div>

@@ -55,6 +55,17 @@ const CurrentPlan = ({ plan }) => {
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    padding: '10px',
+    borderRadius: theme.borderRadius.small,
+  };
+  
+  // Hover styles for detail items
+  const detailItemHoverStyles = {
+    transform: 'translateY(-2px) scale(1.02)',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    backgroundColor: theme.colors.welcomeCard.background, // Same green as WelcomeJourney card
   };
   
   const iconStyles = {
@@ -158,25 +169,73 @@ const CurrentPlan = ({ plan }) => {
       <p style={descriptionStyles}>{plan.description}</p>
       
       <div style={detailsContainerStyles}>
-        <div style={detailItemStyles}>
+        <div 
+          style={detailItemStyles}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = detailItemHoverStyles.transform;
+            e.currentTarget.style.boxShadow = detailItemHoverStyles.boxShadow;
+            e.currentTarget.style.backgroundColor = detailItemHoverStyles.backgroundColor;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'none';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
+        >
           <span style={iconStyles}>{getMetricIcon('Duration')}</span>
           <span style={detailLabelStyles}>Duration</span>
           <span style={detailValueStyles}>{plan.duration}</span>
         </div>
         
-        <div style={detailItemStyles}>
+        <div 
+          style={detailItemStyles}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = detailItemHoverStyles.transform;
+            e.currentTarget.style.boxShadow = detailItemHoverStyles.boxShadow;
+            e.currentTarget.style.backgroundColor = detailItemHoverStyles.backgroundColor;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'none';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
+        >
           <span style={iconStyles}>{getMetricIcon('Focus')}</span>
           <span style={detailLabelStyles}>Focus</span>
           <span style={detailValueStyles}>{plan.focus}</span>
         </div>
         
-        <div style={detailItemStyles}>
+        <div 
+          style={detailItemStyles}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = detailItemHoverStyles.transform;
+            e.currentTarget.style.boxShadow = detailItemHoverStyles.boxShadow;
+            e.currentTarget.style.backgroundColor = detailItemHoverStyles.backgroundColor;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'none';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
+        >
           <span style={iconStyles}>{getMetricIcon('Frequency')}</span>
           <span style={detailLabelStyles}>Frequency</span>
           <span style={detailValueStyles}>{plan.frequency}</span>
         </div>
         
-        <div style={detailItemStyles}>
+        <div 
+          style={detailItemStyles}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = detailItemHoverStyles.transform;
+            e.currentTarget.style.boxShadow = detailItemHoverStyles.boxShadow;
+            e.currentTarget.style.backgroundColor = detailItemHoverStyles.backgroundColor;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'none';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
+        >
           <span style={iconStyles}>{getMetricIcon('Volume')}</span>
           <span style={detailLabelStyles}>Volume</span>
           <span style={detailValueStyles}>{plan.volume}</span>
@@ -192,7 +251,19 @@ const CurrentPlan = ({ plan }) => {
         </div>
         <div style={footerStyles}>
           <div style={progressTextStyles}>Week {plan.currentWeek} of {plan.totalWeeks}</div>
-          <div style={viewLinkStyles}>
+          <div 
+            style={viewLinkStyles}
+            onMouseOver={(e) => {
+              e.currentTarget.style.color = theme.colors.primaryDark;
+              e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)';
+              e.currentTarget.style.textShadow = '0 2px 4px rgba(76, 175, 80, 0.15)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.color = theme.colors.primary;
+              e.currentTarget.style.transform = 'none';
+              e.currentTarget.style.textShadow = 'none';
+            }}
+          >
             View Full Plan <span style={{marginLeft: '4px'}}>→</span>
           </div>
         </div>

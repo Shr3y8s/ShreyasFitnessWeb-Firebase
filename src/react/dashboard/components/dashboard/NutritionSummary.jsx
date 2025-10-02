@@ -372,7 +372,20 @@ const NutritionSummary = ({ nutrition }) => {
           </div>
           <div style={headerTextStyles}>Nutrition Summary</div>
         </div>
-        <a href="#" style={viewLinkStyles}>
+        <a 
+          href="#" 
+          style={viewLinkStyles}
+          onMouseOver={(e) => {
+            e.currentTarget.style.color = theme.colors.primaryDark;
+            e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)';
+            e.currentTarget.style.textShadow = '0 2px 4px rgba(76, 175, 80, 0.15)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.color = theme.colors.primary;
+            e.currentTarget.style.transform = 'none';
+            e.currentTarget.style.textShadow = 'none';
+          }}
+        >
           View Nutrition <ArrowRightIcon />
         </a>
       </div>
@@ -448,10 +461,36 @@ const NutritionSummary = ({ nutrition }) => {
       
       {/* Action buttons */}
       <div style={buttonContainerStyles}>
-        <button style={primaryButtonStyles}>
+        <button 
+          style={primaryButtonStyles}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = theme.colors.primaryDark;
+            e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(76, 175, 80, 0.25)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = theme.colors.primary;
+            e.currentTarget.style.transform = 'none';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
           <UtensildIcon /> Log Meal
         </button>
-        <button style={secondaryButtonStyles}>
+        <button 
+          style={secondaryButtonStyles}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+            e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(76, 175, 80, 0.15)';
+            e.currentTarget.style.borderColor = theme.colors.primaryDark;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = 'white';
+            e.currentTarget.style.transform = 'none';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.borderColor = theme.colors.primary;
+          }}
+        >
           <PlusIcon /> Add Water
         </button>
       </div>

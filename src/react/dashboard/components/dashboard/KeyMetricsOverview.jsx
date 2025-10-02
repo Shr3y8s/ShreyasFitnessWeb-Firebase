@@ -100,11 +100,16 @@ const KeyMetricsOverview = ({ metrics }) => {
       position: 'relative',
       overflow: 'hidden',
       cursor: 'pointer',
-      '&:hover': {
-        transform: 'translateY(-2px)',
-        boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-      }
+      // Removed non-working hover styles (will use event handlers instead)
     };
+  };
+  
+  // Metric item hover styles
+  const metricItemHoverStyles = {
+    transform: 'translateY(-2px) scale(1.02)',
+    boxShadow: '0 4px 12px rgba(76, 175, 80, 0.15)',
+    backgroundColor: 'rgba(249, 249, 249, 0.95)',
+    borderColor: theme.colors.primary,
   };
   
   // Value container styles
@@ -203,6 +208,18 @@ const KeyMetricsOverview = ({ metrics }) => {
           key={index} 
           style={getMetricItemStyles(metric)}
           title={getTooltipText(metric)}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = metricItemHoverStyles.transform;
+            e.currentTarget.style.boxShadow = metricItemHoverStyles.boxShadow;
+            e.currentTarget.style.backgroundColor = metricItemHoverStyles.backgroundColor;
+            e.currentTarget.style.borderColor = theme.colors.primary;
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'none';
+            e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.06)';
+            e.currentTarget.style.backgroundColor = 'rgba(249, 249, 249, 0.8)';
+            e.currentTarget.style.borderColor = 'rgba(76, 175, 80, 0.4)';
+          }}
         >
           <div 
             style={{
