@@ -56,6 +56,7 @@ export const theme = {
   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
   boxShadowHover: '0 4px 12px rgba(0, 0, 0, 0.1)',
   boxShadowActive: '0 2px 6px rgba(0, 0, 0, 0.15)',
+  boxShadowGreenHover: '0 4px 12px rgba(76, 175, 80, 0.25)',
   transition: 'all 0.3s ease',
   borderRadius: {
     small: '4px',

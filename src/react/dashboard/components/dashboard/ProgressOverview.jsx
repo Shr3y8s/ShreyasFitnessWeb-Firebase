@@ -231,7 +231,7 @@ const ProgressOverview = ({ progressData }) => {
     <div 
       style={containerStyles} 
       onMouseOver={(e) => {
-        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,123,255,0.15)';
+        e.currentTarget.style.boxShadow = theme.boxShadowGreenHover;
         e.currentTarget.style.transform = 'translateY(-2px)';
       }}
       onMouseOut={(e) => {

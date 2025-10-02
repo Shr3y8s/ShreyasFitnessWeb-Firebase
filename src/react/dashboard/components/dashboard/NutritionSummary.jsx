@@ -353,7 +353,17 @@ const NutritionSummary = ({ nutrition }) => {
   );
 
   return (
-    <div style={containerStyles}>
+    <div 
+      style={containerStyles}
+      onMouseOver={(e) => {
+        e.currentTarget.style.boxShadow = theme.boxShadowGreenHover;
+        e.currentTarget.style.transform = 'translateY(-2px)';
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
+        e.currentTarget.style.transform = 'translateY(0)';
+      }}
+    >
       {/* Header with View Nutrition link */}
       <div style={headerContainerStyles}>
         <div style={headerLeftStyles}>
