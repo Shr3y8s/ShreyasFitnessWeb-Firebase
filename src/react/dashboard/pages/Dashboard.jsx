@@ -1,62 +1,271 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { theme } from '../styles/theme';
+import { 
+  todaysFocusStyles,
+  progressHubStyles, 
+  planResourcesStyles, 
+  getResponsiveStyles 
+} from '../styles/sectionStyles';
 
-// Import dashboard widgets
+// Simple emoji icons as placeholders 
+const Icons = {
+  journey: '🚀',
+  upcoming: '📅',
+  metrics: '📊',
+  sessions: '🏋️',
+  weeks: '📆',
+  checkin: '🔍',
+  payment: '💳',
+  ai: '🤖',
+  plan: '📝',
+  progress: '📈',
+  upcomingSessions: '⏰',
+  completedSessions: '✅',
+  nutrition: '🍎'
+};
+
+// Import dashboard components
+import {
+  AIRecommendations,
+  AccountSummary,
+  CheckInPrompt,
+  CompletedSessions,
+  CurrentGoals,
+  CurrentPlan,
+  DailyChecklist,
+  DashboardCard,
+  DashboardSection,
+  KeyMetricsOverview,
+  MetricDisplay,
+  MetricItem,
+  MetricsDashboard,
+  NutritionSummary,
+  PaymentInfo,
+  PersonalRecords,
+  ProgressChart,
+  ProgressOverview,
+  ProgressSummary,
+  QuickActions,
+  SessionsOverview,
+  StatsOverview,
+  TrainerNote,
+  UpcomingSessionHighlight,
+  UpcomingSessions,
+  WeeklyCheckIn,
+  WelcomeJourney,
+  WelcomeJourneyModal,
+  WorkoutCalendar
+} from '../components/dashboard';
+
 const Dashboard = () => {
   const { currentUser, userProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [showWelcomeJourney, setShowWelcomeJourney] = useState(true);
+  // Keeping modal state for future use but not displaying it now
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [greeting, setGreeting] = useState('');
+  
+  // Handle closing or completing the welcome journey
+  const handleWelcomeJourneyClose = () => {
+    // Save in localStorage that the journey was closed
+    localStorage.setItem('welcomeJourneyClosedAt', new Date().toISOString());
+    setShowWelcomeJourney(false);
+  };
+
+  const handleWelcomeJourneyCompleted = () => {
+    // Save in localStorage that the journey was completed
+    localStorage.setItem('welcomeJourneyCompletedAt', new Date().toISOString());
+    setShowWelcomeJourney(false);
+  };
+  
+  // Track window size for responsive layouts
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  
+  // Get responsive styles based on screen width
+  const responsiveStyles = getResponsiveStyles(windowWidth);
+  
+  // Check if we're on mobile view
+  const isMobile = windowWidth <= 768;
+  
+  // Set greeting based on time of day
+  useEffect(() => {
+    const getGreeting = () => {
+      const hour = new Date().getHours();
+      if (hour < 12) return 'Good morning';
+      if (hour < 18) return 'Good afternoon';
+      return 'Good evening';
+    };
+    setGreeting(getGreeting());
+  }, []);
+  
   const [dashboardData, setDashboardData] = useState({
     metrics: {
+      weightChange: '-2',
+      strengthGain: '+15%',
+      bodyFatChange: '-1.5%',
       sessionsCompleted: 12,
-      weeksActive: 8,
-      strengthGained: '15lb'
+      weeksActive: 8
+    },
+    personalRecords: [
+      {
+        title: "New Deadlift PR",
+        value: "315 lbs",
+        date: "Aug 12, 2024",
+        type: "deadlift"
+      },
+      {
+        title: "Fastest 5k Run",
+        value: "24:32",
+        date: "Aug 10, 2024",
+        type: "run"
+      },
+      {
+        title: "Workout Streak",
+        value: "14 Days",
+        date: "Ongoing",
+        type: "streak"
+      }
+    ],
+    nextPayment: {
+      month: 'Aug',
+      day: 28
     },
     currentPlan: {
-      name: 'Strength Building Program',
-      remainingWeeks: 4,
-      focus: 'Building Strength & Endurance',
-      frequency: '3 sessions per week',
-      progress: 60
+      name: 'Hypertrophy Phase',
+      description: 'Your focus for the next 4 weeks is building muscle mass.',
+      duration: '12 Weeks',
+      focus: 'Strength',
+      frequency: '4/week',
+      volume: 'High',
+      currentWeek: 8,
+      totalWeeks: 12
+    },
+    progressChart: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      weightData: [193, 200, 207, 214, 218, 220],
+      bodyFatData: [18, 19, 21, 23, 25, 27]
     },
     upcomingSessions: [
       {
         id: 1,
-        day: 15,
-        month: 'Jul',
-        title: 'Upper Body Strength',
-        time: '2:00 PM - 3:00 PM',
-        type: 'In-Person'
+        title: 'Full Body Strength',
+        dateTime: '2024-08-15 at 09:00 AM'
       },
       {
         id: 2,
-        day: 17,
-        month: 'Jul',
-        title: 'Full Body HIIT',
-        time: '10:00 AM - 11:00 AM',
-        type: 'Remote'
+        title: 'Cardio & Core',
+        dateTime: '2024-08-17 at 10:00 AM'
       },
       {
         id: 3,
-        day: 19,
-        month: 'Jul',
-        title: 'Lower Body Focus',
-        time: '3:30 PM - 4:30 PM',
-        type: 'In-Person'
+        title: 'Upper Body Focus',
+        dateTime: '2024-08-19 at 09:00 AM'
       }
     ],
     completedSessions: [
-      { date: 'Jul 12', workout: 'Lower Body Power', duration: '60 min' },
-      { date: 'Jul 10', workout: 'Cardio & Core', duration: '45 min' },
-      { date: 'Jul 8', workout: 'Upper Body Strength', duration: '60 min' },
-      { date: 'Jul 5', workout: 'Full Body HIIT', duration: '45 min' },
-      { date: 'Jul 3', workout: 'Active Recovery', duration: '30 min' }
+      { date: '2024-08-12', workout: 'Full Body Strength', duration: '60 min' },
+      { date: '2024-08-10', workout: 'Lower Body Focus', duration: '55 min' },
+      { date: '2024-08-08', workout: 'Active Recovery', duration: '30 min' }
     ],
-    progressMetrics: {
-      weight: { current: 165, change: -5, unit: 'lbs' },
-      bodyFat: { current: 18, change: -2, unit: '%' }
-    }
+    upcomingSession: {
+      title: 'In-Person Strength Training',
+      date: 'Tomorrow, August 15th at 9:00 AM',
+      location: 'City Gym, 123 Fitness St.'
+    },
+    welcomeJourney: {
+      step1: 'Schedule your 30-minute planning consultation',
+      step2: 'Complete your consultation',
+      step3: 'Receive your personalized fitness plan'
+    },
+    nutritionSummary: {
+      caloriesConsumed: 2200,
+      caloriesTarget: 2200,
+      macros: {
+        protein: 40,
+        carbs: 35,
+        fat: 25
+      },
+      waterIntake: {
+        current: 64,
+        target: 128
+      }
+    },
+    dailyChecklist: [
+      { task: "Complete today's workout", completed: false },
+      { task: "Hit 8k-10k steps", completed: false },
+      { task: "Follow nutrition plan", completed: false },
+      { task: "Log your weight", completed: false },
+      { task: "Schedule weekly check-in", completed: false }
+    ],
+    aiRecommendations: [
+      {
+        title: 'Increase Cardio',
+        description: 'Aim for 3 sessions of 30 minutes per week to improve endurance.'
+      },
+      {
+        title: 'Focus on Compound Lifts',
+        description: 'Prioritize squats, deadlifts, and bench presses to build overall strength.'
+      }
+    ],
+    currentGoals: [
+      {
+        title: 'Increase Cardio Endurance',
+        description: 'Complete 3 sessions of 30+ minutes of cardio each week.'
+      },
+      {
+        title: 'Build Full-Body Strength',
+        description: 'Focus on progressive overload in compound lifts like squats and deadlifts.'
+      },
+      {
+        title: 'Improve Nutritional Habits',
+        description: 'Consistently hit daily protein and water intake targets.'
+      }
+    ]
   });
 
+  // Check localStorage to determine if welcome journey should be shown
+  useEffect(() => {
+    // Only show the welcome journey on first visit or if not recently shown
+    const journeyClosedAt = localStorage.getItem('welcomeJourneyClosedAt');
+    const journeyCompletedAt = localStorage.getItem('welcomeJourneyCompletedAt');
+    
+    // If the journey was closed or completed, hide it
+    if (journeyClosedAt || journeyCompletedAt) {
+      // Don't show if completed or closed within the last 30 days
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const lastClosedDate = journeyClosedAt ? new Date(journeyClosedAt) : null;
+      const lastCompletedDate = journeyCompletedAt ? new Date(journeyCompletedAt) : null;
+      
+      // If both dates exist, take the most recent one
+      let lastInteractionDate = null;
+      if (lastClosedDate && lastCompletedDate) {
+        lastInteractionDate = lastClosedDate > lastCompletedDate ? lastClosedDate : lastCompletedDate;
+      } else {
+        lastInteractionDate = lastClosedDate || lastCompletedDate;
+      }
+      
+      // Only hide if the last interaction was less than 30 days ago
+      if (lastInteractionDate && lastInteractionDate > thirtyDaysAgo) {
+        setShowWelcomeJourney(false);
+      }
+    }
+  }, []);
+  
   useEffect(() => {
     // In a real implementation, we would fetch data from Firestore here
     // For now, we're using the mock data defined above
@@ -65,29 +274,47 @@ const Dashboard = () => {
     }, 1000);
   }, [currentUser?.uid]);
 
+  // Responsive styles - simplified for minimalist design
   const pageStyles = {
-    padding: '20px 0'
+    padding: theme.spacing.lg,
+    maxWidth: '1200px',
+    margin: '0 auto',
+    backgroundColor: theme.colors.white,
+    minHeight: '100vh',
   };
-
-  const sectionTitleStyles = {
-    fontSize: '24px',
-    fontWeight: '600',
-    marginBottom: '20px',
-    color: '#333'
+  
+  // Add the missing styles that are referenced in the code
+  const fullWidthSectionStyles = {
+    gridColumn: '1 / -1',
+    marginBottom: '24px'
   };
-
-  const dashboardGridStyles = {
+  
+  const multiColumnSectionStyles = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-    gap: '25px',
-    marginTop: '25px'
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '24px',
+    marginBottom: '24px'
   };
 
-  const overviewStyles = {
+  const columnSpan2Styles = {
+    gridColumn: 'span 2'
+  };
+
+  const columnSpan1Styles = {
+    gridColumn: 'span 1'
+  };
+
+  const metricsGridStyles = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    gap: '20px',
-    marginBottom: '25px'
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gap: '20px'
+  };
+
+  const rowsGridStyles = {
+    display: 'grid',
+    gridTemplateRows: 'minmax(120px, auto) 1fr',
+    gap: '24px',
+    height: '100%'
   };
 
   // Loading state
@@ -95,539 +322,184 @@ const Dashboard = () => {
     return <div>Loading dashboard data...</div>;
   }
 
+  // Floating greeting styles - updated for minimalist design
+  const greetingContainerStyles = {
+    marginBottom: theme.spacing.xl
+  };
+  
+  const mainGreetingStyles = {
+    ...theme.typography.greeting,
+    marginBottom: theme.spacing.xs
+  };
+  
+  const nameHighlightStyles = {
+    color: theme.colors.primary
+  };
+  
+  const subGreetingStyles = {
+    ...theme.typography.subGreeting
+  };
+
+  // Custom section styles for a more unified look
+  const sectionStyleBase = {
+    marginTop: '24px',
+    marginBottom: '16px',
+    background: 'none',
+    padding: '0'
+  };
+
   return (
     <div style={pageStyles}>
-      <h1 style={sectionTitleStyles}>Your Fitness Dashboard</h1>
+      {/* Welcome Journey Modal removed for now */}
       
-      {/* Overview Metrics */}
-      <div style={overviewStyles} className="overview-metrics">
-        <OverviewCard 
-          icon="📊" 
-          value={dashboardData.metrics.sessionsCompleted} 
-          label="Sessions Completed"
-        />
-        <OverviewCard 
-          icon="📅" 
-          value={dashboardData.metrics.weeksActive} 
-          label="Weeks Active"
-        />
-        <OverviewCard 
-          icon="💪" 
-          value={dashboardData.metrics.strengthGained} 
-          label="Strength Gained"
-        />
+      {/* Floating greeting */}
+      <section style={greetingContainerStyles}>
+        <h1 style={mainGreetingStyles}>
+          {greeting}, <span style={nameHighlightStyles}>{userProfile?.name || 'Client'}</span>
+        </h1>
+        <p style={subGreetingStyles}>
+          Ready to crush your goals today? Let's get started.
+        </p>
+      </section>
+      
+      {/* Side-by-side components between greeting and stats */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : showWelcomeJourney ? '1fr 1fr' : '1fr',
+        gap: theme.spacing.md,
+        marginBottom: theme.spacing.md
+      }}>
+        {/* Upcoming Session Highlight */}
+        <div style={{ 
+          height: '100%',
+          // If welcome journey is not shown, upcoming session spans full width
+          gridColumn: !showWelcomeJourney ? '1 / -1' : 'auto'
+        }}>
+          <UpcomingSessionHighlight session={dashboardData.upcomingSession} />
+        </div>
+        
+        {/* Welcome Journey (conditionally rendered) */}
+        {showWelcomeJourney && (
+          <div>
+            <WelcomeJourney 
+              journey={dashboardData.welcomeJourney} 
+              onAllCompleted={handleWelcomeJourneyCompleted} 
+              onClose={handleWelcomeJourneyClose}
+            />
+          </div>
+        )}
       </div>
       
-      {/* Main Dashboard Grid */}
-      <div style={dashboardGridStyles} className="dashboard-grid">
-        {/* Current Plan Widget */}
-        <DashboardCard title="Current Plan">
+      {/* Side-by-side metrics layout - with KeyMetricsOverview taking more space */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr',
+        gap: theme.spacing.md,
+        marginBottom: theme.spacing.lg
+      }}>
+        {/* Left column with KeyMetricsOverview and CurrentPlan stacked */}
+        <div>
+          {/* Key Metrics Overview at the top */}
+          <KeyMetricsOverview
+            metrics={[
+              {
+                label: 'Weight Change',
+                value: '-2 lbs',
+                trend: 'down',
+                type: 'positive'
+              },
+              {
+                label: 'Strength Gain',
+                value: '+15%',
+                trend: 'up',
+                type: 'positive'
+              },
+              {
+                label: 'Body Fat',
+                value: '-1.5%',
+                trend: 'down',
+                type: 'positive'
+              }
+            ]}
+          />
+          
+          {/* Current Plan - underneath Key Metrics Overview */}
           <CurrentPlan plan={dashboardData.currentPlan} />
-        </DashboardCard>
-        
-        {/* Progress Tracking Widget */}
-        <DashboardCard title="Progress Tracking">
-          <ProgressTracking metrics={dashboardData.progressMetrics} />
-        </DashboardCard>
-        
-        {/* Upcoming Sessions Widget */}
-        <DashboardCard title="Upcoming Sessions">
-          <UpcomingSessions sessions={dashboardData.upcomingSessions} />
-        </DashboardCard>
-        
-        {/* Completed Sessions Widget */}
-        <DashboardCard title="Completed Sessions">
-          <CompletedSessions sessions={dashboardData.completedSessions} />
-        </DashboardCard>
-      </div>
-    </div>
-  );
-};
-
-// Reusable overview card component
-const OverviewCard = ({ icon, value, label }) => {
-  const cardStyles = {
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    padding: '20px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '15px',
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-    cursor: 'pointer',
-    height: '100px'
-  };
-
-  const iconStyles = {
-    fontSize: '28px',
-    backgroundColor: '#f0f9f0',
-    width: '50px',
-    height: '50px',
-    borderRadius: '8px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: '#4CAF50'
-  };
-
-  const valueStyles = {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: '5px'
-  };
-
-  const labelStyles = {
-    color: '#666',
-    fontSize: '14px'
-  };
-
-  return (
-    <div style={cardStyles} className="overview-card">
-      <div style={iconStyles}>{icon}</div>
-      <div>
-        <div style={valueStyles}>{value}</div>
-        <div style={labelStyles}>{label}</div>
-      </div>
-    </div>
-  );
-};
-
-// Reusable dashboard card component
-const DashboardCard = ({ title, children }) => {
-  const cardStyles = {
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column'
-  };
-
-  const headerStyles = {
-    backgroundColor: '#f8f9fa',
-    padding: '15px 20px',
-    borderBottom: '1px solid #eee'
-  };
-
-  const titleStyles = {
-    margin: 0,
-    fontSize: '18px',
-    fontWeight: '600',
-    color: '#333'
-  };
-
-  const contentStyles = {
-    padding: '20px',
-    flex: 1,
-    overflowY: 'auto'
-  };
-
-  return (
-    <div style={cardStyles} className="dashboard-card">
-      <div style={headerStyles}>
-        <h3 style={titleStyles}>{title}</h3>
-      </div>
-      <div style={contentStyles}>
-        {children}
-      </div>
-    </div>
-  );
-};
-
-// Current Plan widget component
-const CurrentPlan = ({ plan }) => {
-  const planInfoStyles = {
-    marginBottom: '15px'
-  };
-
-  const planTitleStyles = {
-    fontSize: '18px',
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: '5px'
-  };
-
-  const remainingWeeksStyles = {
-    color: '#666',
-    fontSize: '14px',
-    marginBottom: '15px'
-  };
-
-  const detailItemStyles = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '10px'
-  };
-
-  const detailLabelStyles = {
-    color: '#666'
-  };
-
-  const detailValueStyles = {
-    fontWeight: '500',
-    color: '#333'
-  };
-
-  const progressContainerStyles = {
-    marginTop: '20px'
-  };
-
-  const progressLabelContainerStyles = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '5px'
-  };
-
-  const progressBarStyles = {
-    height: '8px',
-    backgroundColor: '#e9ecef',
-    borderRadius: '4px',
-    overflow: 'hidden'
-  };
-
-  const progressFillStyles = {
-    height: '100%',
-    width: `${plan.progress}%`,
-    backgroundColor: '#4CAF50',
-    borderRadius: '4px'
-  };
-
-  const buttonStyles = {
-    display: 'inline-block',
-    backgroundColor: 'transparent',
-    border: '1px solid #4CAF50',
-    color: '#4CAF50',
-    padding: '8px 16px',
-    borderRadius: '4px',
-    textDecoration: 'none',
-    marginTop: '20px',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    textAlign: 'center'
-  };
-
-  return (
-    <div>
-      <div style={planInfoStyles}>
-        <h4 style={planTitleStyles}>{plan.name}</h4>
-        <p style={remainingWeeksStyles}>{plan.remainingWeeks} weeks remaining</p>
-        
-        <div style={detailItemStyles}>
-          <span style={detailLabelStyles}>Focus:</span>
-          <span style={detailValueStyles}>{plan.focus}</span>
+          
+          {/* Progress Overview - underneath Current Plan */}
+          <ProgressOverview progressData={dashboardData.progressChart} />
+          
+          {/* Workout Calendar - underneath Progress Overview */}
+          <WorkoutCalendar 
+            upcomingSessions={dashboardData.upcomingSessions}
+            completedSessions={dashboardData.completedSessions}
+          />
+          
+          {/* Side-by-side PersonalRecords and NutritionSummary */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: theme.spacing.md,
+            marginTop: theme.spacing.md
+          }}>
+            <PersonalRecords records={dashboardData.personalRecords} />
+            <NutritionSummary nutrition={dashboardData.nutritionSummary} />
+          </div>
         </div>
         
-        <div style={detailItemStyles}>
-          <span style={detailLabelStyles}>Frequency:</span>
-          <span style={detailValueStyles}>{plan.frequency}</span>
+        {/* Account Summary and other components - right side */}
+        <div>
+          <AccountSummary
+            metrics={[
+              {
+                value: dashboardData.metrics.sessionsCompleted,
+                label: 'Sessions Completed',
+                size: 'large'
+              },
+              {
+                value: dashboardData.metrics.weeksActive,
+                label: 'Weeks Active'
+              },
+              {
+                value: '28',
+                prefix: 'AUG',
+                label: 'Next Payment',
+                type: 'admin'
+              }
+            ]}
+          />
+          
+          {/* Trainer Note - underneath Account Summary */}
+          <TrainerNote 
+            trainerName="Shreyas"
+            initial="S"
+            note="Amazing job on your last deadlift session, Alex! Your form is looking solid. Let's focus on adding a bit more weight next week. Keep up the fantastic work!"
+          />
+          
+          {/* Weekly Check-in - underneath Trainer Note */}
+          <WeeklyCheckIn 
+            onSchedule={() => console.log('Schedule check-in clicked')}
+          />
+          
+          {/* Daily Checklist - underneath Weekly Check-in */}
+          <DailyChecklist 
+            tasks={[
+              "Complete today's workout",
+              "Hit 8k-10k steps",
+              "Follow nutrition plan",
+              "Log your weight",
+              "Schedule weekly check-in"
+            ]}
+          />
+          
+          {/* Current Goals - underneath Daily Checklist */}
+          <CurrentGoals 
+            goals={dashboardData.currentGoals}
+          />
         </div>
       </div>
       
-      <div style={progressContainerStyles}>
-        <div style={progressLabelContainerStyles}>
-          <span>Program Progress</span>
-          <span>{plan.progress}%</span>
-        </div>
-        <div style={progressBarStyles}>
-          <div style={progressFillStyles}></div>
-        </div>
-      </div>
-      
-      <button style={buttonStyles}>View Full Program</button>
-    </div>
-  );
-};
-
-// Progress Tracking widget component
-const ProgressTracking = ({ metrics }) => {
-  const metricsGridStyles = {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '15px'
-  };
-
-  const metricCardStyles = {
-    padding: '15px',
-    backgroundColor: '#f8f9fa',
-    borderRadius: '8px'
-  };
-
-  const metricTitleStyles = {
-    fontSize: '16px',
-    fontWeight: '600',
-    marginBottom: '10px',
-    color: '#333'
-  };
-
-  const chartPlaceholderStyles = {
-    height: '100px',
-    backgroundColor: '#eee',
-    borderRadius: '4px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#aaa',
-    marginBottom: '15px'
-  };
-
-  const metricSummaryStyles = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  };
-
-  const metricValueStyles = {
-    fontSize: '18px',
-    fontWeight: '600',
-    color: '#333'
-  };
-
-  const metricChangeStyles = {
-    fontSize: '14px',
-    fontWeight: '500',
-    padding: '3px 8px',
-    borderRadius: '4px',
-    backgroundColor: 'rgba(76, 175, 80, 0.1)',
-    color: '#4CAF50'
-  };
-
-  const buttonStyles = {
-    display: 'block',
-    width: '100%',
-    backgroundColor: 'transparent',
-    border: '1px solid #4CAF50',
-    color: '#4CAF50',
-    padding: '8px',
-    borderRadius: '4px',
-    textDecoration: 'none',
-    marginTop: '20px',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    textAlign: 'center'
-  };
-
-  return (
-    <div>
-      <div style={metricsGridStyles}>
-        {/* Weight Metric */}
-        <div style={metricCardStyles}>
-          <h4 style={metricTitleStyles}>Weight</h4>
-          <div style={chartPlaceholderStyles}>
-            <span>📊 Chart</span>
-          </div>
-          <div style={metricSummaryStyles}>
-            <div style={metricValueStyles}>
-              {metrics.weight.current} {metrics.weight.unit}
-            </div>
-            <div style={metricChangeStyles}>
-              {metrics.weight.change < 0 ? '' : '+'}{metrics.weight.change} {metrics.weight.unit}
-            </div>
-          </div>
-        </div>
-        
-        {/* Body Fat Metric */}
-        <div style={metricCardStyles}>
-          <h4 style={metricTitleStyles}>Body Fat %</h4>
-          <div style={chartPlaceholderStyles}>
-            <span>📊 Chart</span>
-          </div>
-          <div style={metricSummaryStyles}>
-            <div style={metricValueStyles}>
-              {metrics.bodyFat.current}{metrics.bodyFat.unit}
-            </div>
-            <div style={metricChangeStyles}>
-              {metrics.bodyFat.change < 0 ? '' : '+'}{metrics.bodyFat.change}{metrics.bodyFat.unit}
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <button style={buttonStyles}>View All Metrics</button>
-    </div>
-  );
-};
-
-// Upcoming Sessions widget component
-const UpcomingSessions = ({ sessions }) => {
-  const sessionItemStyles = {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '15px',
-    padding: '12px',
-    backgroundColor: '#f8f9fa',
-    borderRadius: '8px'
-  };
-
-  const sessionDateStyles = {
-    width: '50px',
-    height: '50px',
-    backgroundColor: '#4CAF50',
-    borderRadius: '8px',
-    color: 'white',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: '15px'
-  };
-
-  const dateDayStyles = {
-    fontSize: '18px',
-    fontWeight: '600'
-  };
-
-  const dateMonthStyles = {
-    fontSize: '12px'
-  };
-
-  const sessionInfoStyles = {
-    flex: 1
-  };
-
-  const sessionTitleStyles = {
-    fontSize: '16px',
-    fontWeight: '500',
-    marginBottom: '5px',
-    color: '#333'
-  };
-
-  const sessionTimeStyles = {
-    fontSize: '13px',
-    color: '#666',
-    marginBottom: '5px'
-  };
-
-  const sessionTypeStyles = {
-    display: 'inline-block',
-    fontSize: '12px',
-    padding: '3px 8px',
-    backgroundColor: '#e9ecef',
-    borderRadius: '12px',
-    color: '#495057'
-  };
-
-  const sessionActionsStyles = {
-    display: 'flex',
-    gap: '10px'
-  };
-
-  const iconButtonStyles = {
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
-    backgroundColor: 'transparent',
-    border: '1px solid #ddd',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    cursor: 'pointer',
-    color: '#666',
-    fontSize: '12px'
-  };
-
-  const buttonStyles = {
-    display: 'block',
-    width: '100%',
-    backgroundColor: 'transparent',
-    border: '1px solid #4CAF50',
-    color: '#4CAF50',
-    padding: '8px',
-    borderRadius: '4px',
-    textDecoration: 'none',
-    marginTop: '10px',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    textAlign: 'center'
-  };
-
-  return (
-    <div>
-      {sessions.map(session => (
-        <div key={session.id} style={sessionItemStyles}>
-          <div style={sessionDateStyles}>
-            <div style={dateDayStyles}>{session.day}</div>
-            <div style={dateMonthStyles}>{session.month}</div>
-          </div>
-          <div style={sessionInfoStyles}>
-            <h4 style={sessionTitleStyles}>{session.title}</h4>
-            <p style={sessionTimeStyles}>{session.time}</p>
-            <span style={sessionTypeStyles}>{session.type}</span>
-          </div>
-          <div style={sessionActionsStyles}>
-            <button style={iconButtonStyles} title="Reschedule Session">
-              🗓️
-            </button>
-            <button style={iconButtonStyles} title="Cancel Session">
-              ✖️
-            </button>
-          </div>
-        </div>
-      ))}
-      
-      <button style={buttonStyles}>Schedule New Session</button>
-    </div>
-  );
-};
-
-// Completed Sessions widget component
-const CompletedSessions = ({ sessions }) => {
-  const historyItemStyles = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '10px 0',
-    borderBottom: '1px solid #eee'
-  };
-
-  const dateStyles = {
-    width: '60px',
-    color: '#666',
-    fontSize: '14px'
-  };
-
-  const workoutStyles = {
-    flex: 1,
-    color: '#333',
-    fontWeight: '500',
-    paddingLeft: '10px',
-    paddingRight: '10px'
-  };
-
-  const durationStyles = {
-    width: '60px',
-    color: '#666',
-    fontSize: '14px',
-    textAlign: 'right'
-  };
-
-  const buttonStyles = {
-    display: 'block',
-    width: '100%',
-    backgroundColor: 'transparent',
-    border: '1px solid #4CAF50',
-    color: '#4CAF50',
-    padding: '8px',
-    borderRadius: '4px',
-    textDecoration: 'none',
-    marginTop: '20px',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    textAlign: 'center'
-  };
-
-  return (
-    <div>
-      {sessions.map((session, index) => (
-        <div key={index} style={historyItemStyles}>
-          <span style={dateStyles}>{session.date}</span>
-          <span style={workoutStyles}>{session.workout}</span>
-          <span style={durationStyles}>{session.duration}</span>
-        </div>
-      ))}
-      
-      <button style={buttonStyles}>View All History</button>
+      {/* Hidden for minimalist design focus */}
     </div>
   );
 };
